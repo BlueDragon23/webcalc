@@ -2,7 +2,8 @@
 var currentTerm = "";
 var terms = [];
 var operators = [];
-evaulated = false; // Has the calculator just evalated a sum
+var history = [];
+var evaulated = false; // Has the calculator just evaluated a sum
 
 $(".number").click(function() { 
 	if (evaulated) {
@@ -21,8 +22,8 @@ $(".operator").click(function() {
 		currentTerm = "";
 		console.log(terms);
 		operators.push($(this).html());
-		$("#output").html($("#output").html() + $(this).html());		
 		console.log(operators);
+		$("#output").html($("#output").html() + $(this).html());
 	}
 });
 
@@ -35,7 +36,16 @@ $("#return").click(function() {
 		currentTerm = "";
 		console.log(terms);
 		console.log(operators);
-		// First evaluate the multiplaction and division
+		// First evaluate the exponentiation
+		while ((mdIndex = operators.findIndex(function(oper) {return oper === "^";})) >= 0) {
+			leftTerm = terms[mdIndex];
+			rightTerm = terms[mdIndex + 1]
+			if (operators[mdIndex] === "^") {
+				terms.splice(mdIndex, 2, Math.pow(leftTerm, rightTerm));
+			}
+			operators.splice(mdIndex, 1);
+		}
+		// Then evaluate the multiplication and division
 		while ((mdIndex = operators.findIndex(function(oper) {return oper === "*" || oper === "/";})) >= 0) {
 			leftTerm = terms[mdIndex];
 			rightTerm = terms[mdIndex + 1]
@@ -58,5 +68,6 @@ $("#return").click(function() {
 		console.log(sum);
 		$("#output").html(sum); // Update the output
 		evaulated = true;
+		history.push(sum);
 	}
-})
+});
